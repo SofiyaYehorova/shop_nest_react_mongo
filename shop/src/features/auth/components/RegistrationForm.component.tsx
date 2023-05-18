@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 import {validateNameLength, validatePasswordLength} from '../../../shared/utils/validation/lenght';
 import {useInput} from '../../../hooks/input/use-input';
 import {validateEmail} from '../../../shared/utils/validation/email';
-import {NewUser} from "../../models";
+import {NewUser} from "../models";
 
 
 const RegistrationFormComponent: FC = () => {

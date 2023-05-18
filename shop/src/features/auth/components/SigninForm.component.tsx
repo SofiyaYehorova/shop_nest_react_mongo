@@ -6,7 +6,7 @@ import {validateEmail} from "../../../shared/utils/validation/email";
 import {validatePasswordLength} from "../../../shared/utils/validation/lenght";
 
 import {Box, Button, Divider, Grid, InputLabel, TextField, Typography} from "@mui/material";
-import {NewUser} from "../../models";
+import {NewUser} from "../models";
 
 const SigninFormComponent: FC = () => {
 
