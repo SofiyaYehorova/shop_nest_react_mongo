@@ -1,9 +1,9 @@
 import {ChangeEvent, useReducer} from "react";
 
-import {InputState} from "./models/InputState.intarface";
-import {Action} from "../shared/models/action.intarface";
+import {ValidatorFn} from "../../shared/utils/validation/models/ValidatorFn";
 import {INPUT_ACTION_BLUR, INPUT_ACTION_CHANGE, INPUT_ACTION_CLEAR, InputActionType} from "./models/InputAction";
-import {ValidatorFn} from "../shared/utils/validation/models/ValidatorFn";
+import {Action} from "../../shared/models/action.intarface";
+import {InputState} from "./models/InputState.intarface";
 
 const initialInputState: InputState = {
     text: '',
@@ -31,6 +31,14 @@ const useInput = (validatorFn?: ValidatorFn) => {
 
     const [{text, hasBeenTouched}, dispatch] = useReducer(inputReducer, initialInputState);
 
+    let shouldDisplayError;
+
+    if(validatorFn) {
+        const isValid = validatorFn(text);
+
+        shouldDisplayError = !isValid && hasBeenTouched;
+    }
+
     const textChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         dispatch({type: INPUT_ACTION_CHANGE, value: e.target.value})
     }
@@ -44,6 +52,7 @@ const useInput = (validatorFn?: ValidatorFn) => {
     }
     return {
         text,
+        shouldDisplayError,
         textChangeHandler,
         inputBlueHandler,
         clearHandler

@@ -1,9 +1,20 @@
 import React, {FC, FormEvent} from 'react';
-
 import {Box, Button, Divider, Grid, InputLabel, TextField, Typography} from "@mui/material";
 import {Link} from "react-router-dom";
 
+import {useInput} from "../../../hooks/input";
+import {validateNameLength} from '../../../shared/utils/validation/lenght';
+
+
 const RegistrationFormComponent: FC = () => {
+
+    const {
+        text: name,
+        textChangeHandler: nameChangeHandler,
+        inputBlueHandler: nameBlurHandler,
+        clearHandler: nameClearHandler,
+        shouldDisplayError: nameHasError
+    } = useInput(validateNameLength);
     const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -21,7 +32,7 @@ const RegistrationFormComponent: FC = () => {
 
                     <InputLabel sx={{fontWeight: 500, marginTop: 1, color: '#000000'}} htmlFor='name'>Your
                         name</InputLabel>
-                    <TextField type='text' name='name' id='name' variant='outlined' size='small'/>
+                    <TextField value={name} onChange={nameChangeHandler} onBlur={nameBlurHandler} error={nameHasError} helperText={nameHasError ? 'Enter your name': ''} type='text' name='name' id='name' variant='outlined' size='small'/>
 
                     <InputLabel sx={{fontWeight: 500, marginTop: 1, color: '#000000'}}
                                 htmlFor='email'>Email</InputLabel>
@@ -52,7 +63,6 @@ const RegistrationFormComponent: FC = () => {
                     <span>By creating an account, you agree to Shop's</span>
                 </small>
             </div>
-
 
 
             <Divider sx={{marginTop: '16px', marginBottom: '16px'}}/>
