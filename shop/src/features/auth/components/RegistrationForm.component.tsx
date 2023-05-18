@@ -41,6 +41,13 @@ const RegistrationFormComponent: FC = () => {
         clearHandler: confirmPasswordClearHandler,
         shouldDisplayError: confirmPasswordHasError
     } = useInput(validatePasswordLength);
+
+    const clearForm = () => {
+        nameClearHandler();
+        emailClearHandler();
+        passwordClearHandler();
+        confirmPasswordClearHandler();
+    }
     const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
