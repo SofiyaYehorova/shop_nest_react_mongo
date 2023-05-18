@@ -2,8 +2,10 @@ import React, {FC, FormEvent} from 'react';
 import {Box, Button, Divider, Grid, InputLabel, TextField, Typography} from "@mui/material";
 import {Link} from "react-router-dom";
 
-import {useInput} from "../../../hooks/input";
-import {validateNameLength} from '../../../shared/utils/validation/lenght';
+import {validateNameLength, validatePasswordLength} from '../../../shared/utils/validation/lenght';
+import {useInput} from '../../../hooks/input/use-input';
+import {validateEmail} from '../../../shared/utils/validation/email';
+import {NewUser} from "../../models";
 
 
 const RegistrationFormComponent: FC = () => {
@@ -15,10 +17,48 @@ const RegistrationFormComponent: FC = () => {
         clearHandler: nameClearHandler,
         shouldDisplayError: nameHasError
     } = useInput(validateNameLength);
+
+    const {
+        text: email,
+        textChangeHandler: emailChangeHandler,
+        inputBlueHandler: emailBlurHandler,
+        clearHandler: emailClearHandler,
+        shouldDisplayError: emailHasError
+    } = useInput(validateEmail);
+
+    const {
+        text: password,
+        textChangeHandler: passwordChangeHandler,
+        inputBlueHandler: passwordBlurHandler,
+        clearHandler: passwordClearHandler,
+        shouldDisplayError: passwordHasError
+    } = useInput(validatePasswordLength);
+
+    const {
+        text: confirmPassword,
+        textChangeHandler: confirmPasswordChangeHandler,
+        inputBlueHandler: confirmPasswordBlurHandler,
+        clearHandler: confirmPasswordClearHandler,
+        shouldDisplayError: confirmPasswordHasError
+    } = useInput(validatePasswordLength);
     const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        console.log('Clicked');
+
+        if (password !== confirmPassword) return;
+
+        if (nameHasError || emailHasError || passwordHasError || confirmPasswordHasError) return;
+
+        if (name.length === 0 || email.length === 0 || password.length === 0 || confirmPassword.length === 0) return;
+
+
+        const newUser: NewUser = {
+            name, email, password
+        }
+
+        console.log("NEW USER: ", newUser);
+
+        clearForm();
     }
 
     return (
@@ -32,20 +72,33 @@ const RegistrationFormComponent: FC = () => {
 
                     <InputLabel sx={{fontWeight: 500, marginTop: 1, color: '#000000'}} htmlFor='name'>Your
                         name</InputLabel>
-                    <TextField value={name} onChange={nameChangeHandler} onBlur={nameBlurHandler} error={nameHasError} helperText={nameHasError ? 'Enter your name': ''} type='text' name='name' id='name' variant='outlined' size='small'/>
+                    <TextField value={name} onChange={nameChangeHandler} onBlur={nameBlurHandler} error={nameHasError}
+                               helperText={nameHasError ? 'Enter your name' : ''} type='text' name='name' id='name'
+                               variant='outlined' size='small'/>
 
                     <InputLabel sx={{fontWeight: 500, marginTop: 1, color: '#000000'}}
                                 htmlFor='email'>Email</InputLabel>
-                    <TextField type='text' name='email' id='email' variant='outlined' size='small'/>
+                    <TextField value={email} onChange={emailChangeHandler} onBlur={emailBlurHandler}
+                               error={emailHasError} helperText={emailHasError ? 'Enter your email' : ''} type='email'
+                               name='email' id='email' variant='outlined' size='small'/>
 
                     <InputLabel sx={{fontWeight: 500, marginTop: 1, color: '#000000'}}
                                 htmlFor='password'>Password</InputLabel>
-                    <TextField type='text' name='password' id='password' variant='outlined' size='small'
+                    <TextField value={password} onChange={passwordChangeHandler} onBlur={passwordBlurHandler}
+                               error={passwordHasError}
+                               helperText={passwordHasError ? 'Minimum 6 characters required' : ''} type='password'
+                               name='password' id='password' variant='outlined' size='small'
                                placeholder='Minimum 6 characters required'/>
+
 
                     <InputLabel sx={{fontWeight: 500, marginTop: 1, color: '#000000'}} htmlFor='confirmPassword'>Re-enter
                         password</InputLabel>
-                    <TextField type='text' name='confirmPassword' id='confirmPassword' variant='outlined' size='small'
+                    <TextField value={confirmPassword} onChange={confirmPasswordChangeHandler}
+                               onBlur={confirmPasswordBlurHandler}
+                               error={confirmPassword.length > 0 && password !== confirmPassword}
+                               helperText={confirmPassword.length > 0 && password !== confirmPassword ? 'Passwords must match' : ''}
+                               type='password'
+                               name='confirmPassword' id='confirmPassword' variant='outlined' size='small'
                                placeholder='Minimum 6 characters required'/>
                     <Button variant='contained' style={{
                         marginTop: '16px',
