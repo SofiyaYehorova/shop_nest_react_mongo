@@ -1,11 +1,15 @@
-import React, {FC, FormEvent} from 'react';
-import {Box, Button, Divider, Grid, InputLabel, TextField, Typography} from "@mui/material";
-import {Link} from "react-router-dom";
+import React, {FC, FormEvent, useEffect} from 'react';
+import {Link, useNavigate} from "react-router-dom";
 
 import {validateNameLength, validatePasswordLength} from '../../../shared/utils/validation/lenght';
+
 import {useInput} from '../../../hooks/input/use-input';
 import {validateEmail} from '../../../shared/utils/validation/email';
 import {NewUser} from "../models";
+import {useAppDispatch, useAppSelector} from '../../../redux/hooks';
+import {register, reset} from "../authSlice";
+
+import {Box, Button, CircularProgress, Divider, Grid, InputLabel, TextField, Typography} from "@mui/material";
 
 
 const RegistrationFormComponent: FC = () => {
@@ -47,7 +51,22 @@ const RegistrationFormComponent: FC = () => {
         emailClearHandler();
         passwordClearHandler();
         confirmPasswordClearHandler();
-    }
+    };
+
+    const dispatch = useAppDispatch();
+
+    const {isLoading, isSuccess} = useAppSelector((state) => state.auth);
+
+    const navigate = useNavigate();
+
+    useEffect(()=>{
+       if(isSuccess) {
+           dispatch(reset());
+           clearForm();
+           navigate('/signin');
+       }
+    }, [isSuccess, dispatch])
+
     const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -61,12 +80,12 @@ const RegistrationFormComponent: FC = () => {
 
         const newUser: NewUser = {
             name, email, password
-        }
+        };
 
-        console.log("NEW USER: ", newUser);
+        dispatch(register(newUser));
+    };
 
-        clearForm();
-    }
+    if (isLoading) return <CircularProgress sx={{marginTop: '64px'}} color='primary'/>;
 
     return (
         <Box sx={{border: 1, padding: 2, borderColor: '#cccccc', width: '350px', marginTop: 2}}>
@@ -151,6 +170,7 @@ const RegistrationFormComponent: FC = () => {
         </Box>
     );
 };
+
 
 export {
     RegistrationFormComponent

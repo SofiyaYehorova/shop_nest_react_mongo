@@ -1,7 +1,8 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {DisplayUser, Jwt, NewUser} from "./models";
-import {grey} from "@mui/material/colors";
+
 import {authService} from "./services";
+import {RootState} from "../../redux/store";
 
 interface AsyncState {
     isLoading: boolean;
@@ -40,7 +41,13 @@ export const register = createAsyncThunk(
 export const authSlice = createSlice({
         name: 'auth',
         initialState,
-        reducers: {},
+        reducers: {
+            reset: (state) => {
+                state.isLoading = false;
+                state.isSuccess = false;
+                state.isError = false;
+            }
+        },
         extraReducers: (builder) => {
             builder
                 //     REGISTER
@@ -59,4 +66,20 @@ export const authSlice = createSlice({
                 })
         }
     }
-)
+);
+
+export const selectedUser = (state: RootState) => {
+    return state.auth;
+};
+
+const {reducer: authReducer, actions: {reset}} = authSlice;
+
+const authAction = {
+    register,
+    reset,
+}
+
+export {
+    authAction,
+    authReducer
+};
